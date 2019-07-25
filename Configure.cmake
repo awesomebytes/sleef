@@ -23,13 +23,15 @@ endif()
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
-  AVX512F AVX2 AVX2128 FMA4 AVX SSE4 SSE2 # x86
+  # AVX512F AVX2 AVX2128 FMA4 AVX 
+  FMA4 SSE4 SSE2 # x86
   ADVSIMD SVE				  # Aarch64
   NEON32				  # Aarch32
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
 set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS 
-  SSE2 AVX AVX2 AVX512F ADVSIMD SVE
+  SSE2 ADVSIMD SVE
+  # AVX AVX2 AVX512F ADVSIMD SVE
   CACHE STRING "List of SIMD architectures supported by libsleef for GNU ABI."
 )
 
@@ -59,27 +61,27 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
     SSE_
     SSE2
     SSE4
-    AVX_
-    AVX
+    # AVX_
+    # AVX
     FMA4
-    AVX2
-    AVX2128
-    AVX512F_
-    AVX512F
+    # AVX2
+    # AVX2128
+    # AVX512F_
+    # AVX512F
   )
   command_arguments(HEADER_PARAMS_SSE_      2 4 __m128d __m128 __m128i __m128i __SSE2__)
   command_arguments(HEADER_PARAMS_SSE2      2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
   command_arguments(HEADER_PARAMS_SSE4      2 4 __m128d __m128 __m128i __m128i __SSE2__ sse4)
-  command_arguments(HEADER_PARAMS_AVX_      4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
-  command_arguments(HEADER_PARAMS_AVX       4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__ avx)
+  # command_arguments(HEADER_PARAMS_AVX_      4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
+  # command_arguments(HEADER_PARAMS_AVX       4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__ avx)
   command_arguments(HEADER_PARAMS_FMA4      4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__ fma4)
-  command_arguments(HEADER_PARAMS_AVX2      4 8 __m256d __m256 __m128i __m256i __AVX__ avx2)
-  command_arguments(HEADER_PARAMS_AVX2128   2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
-  command_arguments(HEADER_PARAMS_AVX512F_  8 16 __m512d __m512 __m256i __m512i __AVX512F__)
-  command_arguments(HEADER_PARAMS_AVX512F   8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
+  # command_arguments(HEADER_PARAMS_AVX2      4 8 __m256d __m256 __m128i __m256i __AVX__ avx2)
+  # command_arguments(HEADER_PARAMS_AVX2128   2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
+  # command_arguments(HEADER_PARAMS_AVX512F_  8 16 __m512d __m512 __m256i __m512i __AVX512F__)
+  # command_arguments(HEADER_PARAMS_AVX512F   8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
 
-  command_arguments(ALIAS_PARAMS_AVX512F_DP   8 __m512d __m256i e avx512f)
-  command_arguments(ALIAS_PARAMS_AVX512F_SP -16 __m512  __m512i e avx512f)
+  # command_arguments(ALIAS_PARAMS_AVX512F_DP   8 __m512d __m256i e avx512f)
+  # command_arguments(ALIAS_PARAMS_AVX512F_SP -16 __m512  __m512i e avx512f)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   set(SLEEF_ARCH_AARCH64 ON CACHE INTERNAL "True for Aarch64 architecture.")
   # Aarch64 requires support for advsimdfma4
@@ -269,7 +271,7 @@ CHECK_C_SOURCE_COMPILES("
     __m128d r = _mm_floor_sd(_mm_set1_pd(1), _mm_set1_pd(2)); }"
   COMPILER_SUPPORTS_SSE4)
 
-set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX})
+# set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX})
 CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -291,7 +293,7 @@ CHECK_C_SOURCE_COMPILES("
     __m256d r = _mm256_macc_pd(_mm256_set1_pd(1), _mm256_set1_pd(2), _mm256_set1_pd(3)); }"
   COMPILER_SUPPORTS_FMA4)
 
-set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX2})
+# set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX2})
 CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -309,7 +311,7 @@ CHECK_C_SOURCE_COMPILES("
     svint32_t r = svdup_n_s32(1); }"
   COMPILER_SUPPORTS_SVE)
 
-set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
+# set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
 CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -328,7 +330,7 @@ CHECK_C_SOURCE_COMPILES("
 
 # AVX2 implies AVX2128
 if(COMPILER_SUPPORTS_AVX2)
-  set(COMPILER_SUPPORTS_AVX2128 1)
+  # set(COMPILER_SUPPORTS_AVX2128 1)
 endif()
 
 # Check if compilation with OpenMP really succeeds
